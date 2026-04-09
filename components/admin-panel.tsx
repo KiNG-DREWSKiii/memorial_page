@@ -121,7 +121,7 @@ export function AdminPanel() {
           </button>
         </div>
 
-        <p className="microcopy">Local development default: `local-dev-admin-key`.</p>
+        <p className="microcopy">Current default admin key: `admin-password123`. Replace it before public launch.</p>
         {state.error ? <p className="submission-message is-error">{state.error}</p> : null}
       </div>
 
