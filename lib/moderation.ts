@@ -1,6 +1,31 @@
 import { clampConfidence } from "@/lib/utils";
-import { moderationModel, ollamaBaseUrl } from "@/lib/config";
+import { cerebrasBaseUrl, moderationModel } from "@/lib/config";
 import type { MediaAsset, ModerationResult } from "@/lib/types";
+
+const schema = {
+  type: "json_schema",
+  json_schema: {
+    name: "memorial_moderation_decision",
+    strict: true,
+    schema: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        decision: {
+          type: "string",
+          enum: ["APPROVE", "FLAG", "REJECT"]
+        },
+        reason: {
+          type: "string"
+        },
+        confidence: {
+          type: "number"
+        }
+      },
+      required: ["decision", "reason", "confidence"]
+    }
+  }
+};
 
 const rejectPatterns = [
   /\b(?:kill yourself|hate(?:ful)?|nazi|slur)\b/i,
@@ -42,18 +67,11 @@ function buildInput(name: string | null, content: string, media: MediaAsset[]) {
           .map((asset) => `${asset.kind}:${asset.fileName} (${asset.mimeType})`)
           .join(", ");
 
-  return `You are the guardian of a memorial site for one deceased person.
-Protect the family and visitors. Approve respectful, relevant memories. Flag uncertainty. Reject clear harm.
-Never approve hate speech, slander, misinformation, spam, trolling, harassment, or content likely to cause pain later.
-Err on the side of protection, not censorship.
-
-Review this submission:
-Optional name: ${name ?? "Anonymous"}
-Message: ${content}
-Attached media: ${mediaSummary}
-
-Return only valid minified JSON with this exact schema:
-{"decision":"APPROVE|FLAG|REJECT","reason":"short explanation","confidence":0.0}`;
+  return {
+    system:
+      "You are the guardian of a memorial site for one deceased person. Protect the family and visitors. Approve respectful, relevant memories. Flag uncertainty. Reject clear harm. Never approve hate speech, slander, misinformation, spam, trolling, harassment, or content likely to cause pain later. Err on the side of protection, not censorship.",
+    user: `Review this submission.\nOptional name: ${name ?? "Anonymous"}\nMessage: ${content}\nAttached media: ${mediaSummary}\n\nReturn a structured moderation decision.`
+  };
 }
 
 export async function moderateMemorialPost(
@@ -61,24 +79,34 @@ export async function moderateMemorialPost(
   content: string,
   media: MediaAsset[]
 ): Promise<ModerationResult> {
-  if (!process.env.OLLAMA_BASE_URL && !process.env.OLLAMA_MODERATION_MODEL) {
+  if (!process.env.CEREBRAS_API_KEY) {
     return fallbackModeration(content);
   }
 
   try {
-    const response = await fetch(`${ollamaBaseUrl}/api/generate`, {
+    const prompt = buildInput(name, content, media);
+
+    const response = await fetch(`${cerebrasBaseUrl}/v1/chat/completions`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CEREBRAS_API_KEY}`
       },
       body: JSON.stringify({
         model: moderationModel,
-        prompt: buildInput(name, content, media),
-        format: "json",
+        messages: [
+          {
+            role: "system",
+            content: prompt.system
+          },
+          {
+            role: "user",
+            content: prompt.user
+          }
+        ],
+        response_format: schema,
         stream: false,
-        options: {
-          temperature: 0.1
-        }
+        temperature: 0.1
       })
     });
 
@@ -86,8 +114,14 @@ export async function moderateMemorialPost(
       return fallbackModeration(content);
     }
 
-    const payload = (await response.json()) as { response?: string };
-    const parsed = JSON.parse(payload.response ?? "{}") as ModerationResult;
+    const payload = (await response.json()) as {
+      choices?: Array<{
+        message?: {
+          content?: string;
+        };
+      }>;
+    };
+    const parsed = JSON.parse(payload.choices?.[0]?.message?.content ?? "{}") as ModerationResult;
 
     return {
       decision:

@@ -10,5 +10,5 @@ export const rejectionMessage =
   "Your message couldn’t be posted at this time. Please ensure it reflects a respectful and relevant memory.";
 
 export const adminKey = process.env.ADMIN_ACCESS_KEY ?? "admin-password123";
-export const moderationModel = process.env.OLLAMA_MODERATION_MODEL ?? "qwen2.5:7b-instruct";
-export const ollamaBaseUrl = process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434";
+export const moderationModel = process.env.CEREBRAS_MODERATION_MODEL ?? "gpt-oss-120b";
+export const cerebrasBaseUrl = process.env.CEREBRAS_BASE_URL ?? "https://api.cerebras.ai";
