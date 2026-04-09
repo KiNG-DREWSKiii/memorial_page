@@ -12,6 +12,9 @@
   --reject: #d2847b;
   --shadow: 0 24px 80px rgba(74, 58, 53, 0.1);
   --radius: 32px;
+  --font-sans: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --primary: #d58ea1;
 }
 
 * {
