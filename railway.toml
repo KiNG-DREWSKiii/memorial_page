@@ -1,0 +1,13 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm run build"
+
+[deploy]
+startCommand = "npm start"
+
+# Persistent Volumes
+# Railway will mount external storage to these paths to prevent wiping data on restart.
+# You must attach a volume to your service in the Railway dashboard.
+[volumes]
+data = "/app/data"
+uploads = "/app/public/uploads"
