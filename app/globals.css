@@ -97,6 +97,7 @@ textarea {
   opacity: 0;
   filter: saturate(0.88);
   animation: fadeSlide 72s infinite;
+  will-change: opacity;
 }
 
 .memory-image-slide {
@@ -109,6 +110,7 @@ textarea {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
   border-radius: 28px;
 }
 
@@ -508,15 +510,15 @@ h2 {
 }
 
 @keyframes fadeSlide {
-  0%,
-  12% {
+  0% {
     opacity: 1;
   }
-  18%,
-  28% {
+  9.75% {
     opacity: 1;
   }
-  36%,
+  11.25% {
+    opacity: 0;
+  }
   100% {
     opacity: 0;
   }
