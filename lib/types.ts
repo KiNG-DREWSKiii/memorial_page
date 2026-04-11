@@ -13,6 +13,7 @@ export type MediaAsset = {
 
 export type Submission = {
   id: string;
+  memorialKey: string;
   name: string | null;
   message: string;
   files: MediaAsset[];
@@ -23,11 +24,13 @@ export type Submission = {
 };
 
 export type SiteSettings = {
+  memorialKey?: string;
   submissionMode: SubmissionMode;
 };
 
 export type Photo = {
   id: string;
+  memorialKey: string;
   sourceSubmissionId?: string | null;
   imageUrl: string;
   caption: string | null;
@@ -39,6 +42,7 @@ export type Photo = {
 
 export type Story = {
   id: string;
+  memorialKey: string;
   sourceSubmissionId?: string | null;
   title: string | null;
   body: string;

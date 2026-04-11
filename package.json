@@ -12,9 +12,11 @@
     "typecheck": "NODE_OPTIONS=--no-experimental-webstorage tsc --noEmit"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.57.4",
     "next": "15.5.15",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "sharp": "0.34.4"
   },
   "devDependencies": {
     "@types/node": "22.15.3",

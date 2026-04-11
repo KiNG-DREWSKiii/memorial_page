@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
-import { createPhoto, createStory, createSubmission, getSiteSettings } from "@/lib/data-store";
+import { memorialConfig } from "@/lib/config";
+import { createSubmission, getSiteSettings } from "@/lib/data-store";
 import { removeMediaFiles, saveMediaFiles } from "@/lib/media-store";
 import { moderateMemorialPost } from "@/lib/moderation";
+import { publishSubmissionArtifacts } from "@/lib/publishing";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
   }
 
   const submission = await createSubmission({
+    memorialKey: memorialConfig.key,
     name,
     message,
     status,
@@ -46,31 +49,7 @@ export async function POST(request: Request) {
   });
 
   if (status === "approved") {
-    for (const file of submission.files) {
-      if (file.kind === "image") {
-        await createPhoto({
-          sourceSubmissionId: submission.id,
-          imageUrl: file.url,
-          caption: submission.message.length < 50 ? submission.message : null,
-          name: submission.name,
-          approved: true,
-          featured: false
-        });
-      }
-    }
-
-    if (submission.message && submission.message.length >= 50) {
-      const coverImage = submission.files.find((f) => f.kind === "image")?.url || null;
-      await createStory({
-        sourceSubmissionId: submission.id,
-        title: null,
-        body: submission.message,
-        coverImage,
-        authorName: submission.name,
-        approved: true,
-        featured: false
-      });
-    }
+    await publishSubmissionArtifacts(submission);
   }
 
   revalidatePath("/");
