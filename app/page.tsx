@@ -52,7 +52,7 @@ export default async function HomePage() {
   });
   const randomizedMessagePool = shuffleArray(messageSlides);
   const alternatingPool: SlideshowItem[] = [];
-  const maxSlides = 8;
+  const maxSlides = Math.max(featuredSlides.length + randomizedImagePool.length + randomizedMessagePool.length, 1);
 
   while (
     alternatingPool.length < maxSlides &&
@@ -67,7 +67,7 @@ export default async function HomePage() {
     }
   }
 
-  const slideshowItems = [...featuredSlides, ...alternatingPool].slice(0, maxSlides);
+  const slideshowItems = [...featuredSlides, ...alternatingPool];
 
   return (
     <main className="page-shell public-layout">

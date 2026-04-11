@@ -60,7 +60,7 @@ textarea {
 .memory-carousel-section {
   position: relative;
   z-index: 1;
-  padding: 32px 0 20px;
+  padding: 24px 0;
 }
 
 .memory-carousel-shell {
@@ -96,19 +96,26 @@ textarea {
   inset: 0;
   opacity: 0;
   filter: saturate(0.88);
-  animation: fadeSlide 72s infinite;
   will-change: opacity;
+  transition: opacity 900ms ease;
+  pointer-events: none;
+}
+
+.memory-carousel-slide.is-active {
+  opacity: 1;
 }
 
 .memory-image-slide {
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: clamp(18px, 3vw, 24px);
 }
 
 .memory-carousel-image {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   object-position: center;
   border-radius: 28px;
@@ -509,21 +516,6 @@ h2 {
   margin-bottom: 22px;
 }
 
-@keyframes fadeSlide {
-  0% {
-    opacity: 1;
-  }
-  9.75% {
-    opacity: 1;
-  }
-  11.25% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
 @media (max-width: 900px) {
   .page-shell,
   .admin-page {
@@ -549,6 +541,10 @@ h2 {
 
   .memory-carousel-shell {
     height: 420px;
+  }
+
+  .memory-image-slide {
+    padding: 18px;
   }
 }
 
