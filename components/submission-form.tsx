@@ -9,10 +9,12 @@ export function SubmissionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [resultMessage, setResultMessage] = useState("");
 
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     setError("");
+    setResultMessage("");
 
     try {
       const response = await fetch("/api/submissions", {
@@ -26,8 +28,11 @@ export function SubmissionForm() {
         return;
       }
 
+      const payload = (await response.json()) as { message?: string };
+      setResultMessage(payload.message || "Your memory has been received.");
       setSubmitted(true);
       formRef.current?.reset();
+      router.refresh();
     } catch {
       setError("Unable to send your memory. Please try again.");
     } finally {
@@ -39,7 +44,7 @@ export function SubmissionForm() {
     return (
       <div className="panel form-panel text-center">
         <h2>Thank you.</h2>
-        <p className="hero-message">Your memory has been received and will be reviewed before it appears.</p>
+        <p className="hero-message">{resultMessage || "Your memory has been received and will be reviewed before it appears."}</p>
         <button className="secondary-button" onClick={() => setSubmitted(false)} style={{ marginTop: 24 }}>
           Share another memory
         </button>
@@ -86,11 +91,10 @@ export function SubmissionForm() {
         <button className="primary-button" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Sending..." : "Submit"}
         </button>
-        <p className="microcopy">Your memory will be reviewed before it appears.</p>
+        <p className="microcopy">When submissions are open, safe memories can appear instantly. When locked, they go to admin review.</p>
       </div>
 
       {error ? <p className="submission-message is-error">{error}</p> : null}
     </form>
   );
 }
-

@@ -1,4 +1,5 @@
 export type SubmissionStatus = "pending" | "approved" | "flagged" | "rejected";
+export type SubmissionMode = "open" | "locked";
 
 export type MediaKind = "image" | "video";
 
@@ -21,8 +22,13 @@ export type Submission = {
   aiReason?: string;
 };
 
+export type SiteSettings = {
+  submissionMode: SubmissionMode;
+};
+
 export type Photo = {
   id: string;
+  sourceSubmissionId?: string | null;
   imageUrl: string;
   caption: string | null;
   name: string | null;
@@ -33,6 +39,7 @@ export type Photo = {
 
 export type Story = {
   id: string;
+  sourceSubmissionId?: string | null;
   title: string | null;
   body: string;
   coverImage: string | null;
@@ -49,4 +56,3 @@ export type ModerationResult = {
   reason: string;
   confidence: number;
 };
-

@@ -8,6 +8,7 @@ import type { Submission } from "@/lib/types";
 type AdminState = {
   key: string;
   submissions: Submission[];
+  submissionMode: "open" | "locked";
   status: "idle" | "loading" | "ready" | "error";
   error: string;
   filter: "pending" | "flagged" | "approved" | "rejected";
@@ -16,6 +17,7 @@ type AdminState = {
 const initialState: AdminState = {
   key: "",
   submissions: [],
+  submissionMode: "locked",
   status: "idle",
   error: "",
   filter: "pending"
@@ -31,6 +33,26 @@ export function AdminPanel() {
       setState((current) => ({ ...current, key: savedKey }));
     }
   }, []);
+
+  async function loadSettings(nextKey = state.key) {
+    const response = await fetch("/api/admin/settings", {
+      headers: {
+        "x-admin-key": nextKey
+      }
+    });
+
+    const payload = (await response.json()) as { settings?: { submissionMode?: "open" | "locked" }; error?: string };
+
+    if (!response.ok) {
+      setState((current) => ({ ...current, error: payload.error ?? "Could not load settings." }));
+      return;
+    }
+
+    setState((current) => ({
+      ...current,
+      submissionMode: payload.settings?.submissionMode === "open" ? "open" : "locked"
+    }));
+  }
 
   async function loadSubmissions(nextFilter: "pending" | "flagged" | "approved" | "rejected" = state.filter, nextKey = state.key) {
     setState((current) => ({ ...current, status: "loading", filter: nextFilter, error: "" }));
@@ -60,6 +82,34 @@ export function AdminPanel() {
       filter: nextFilter,
       error: ""
     }));
+  }
+
+  async function updateMode(nextMode: "open" | "locked") {
+    const response = await fetch("/api/admin/settings", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-key": state.key
+      },
+      body: JSON.stringify({ submissionMode: nextMode })
+    });
+
+    const payload = (await response.json()) as { settings?: { submissionMode?: "open" | "locked" }; error?: string };
+
+    if (!response.ok) {
+      setState((current) => ({ ...current, error: payload.error ?? "Could not update submission mode." }));
+      return;
+    }
+
+    setState((current) => ({
+      ...current,
+      submissionMode: payload.settings?.submissionMode === "open" ? "open" : "locked",
+      error: ""
+    }));
+
+    startTransition(() => {
+      router.refresh();
+    });
   }
 
   async function handleAction(id: string, method: "PATCH" | "DELETE", status?: "approved" | "flagged" | "rejected") {
@@ -108,6 +158,7 @@ export function AdminPanel() {
             type="button"
             onClick={() => {
               window.sessionStorage.setItem("memorial-admin-key", state.key);
+              void loadSettings(state.key);
               void loadSubmissions("pending");
             }}
           >
@@ -119,6 +170,29 @@ export function AdminPanel() {
           <button className="secondary-button" type="button" onClick={() => void loadSubmissions("rejected")}>
             Rejected
           </button>
+        </div>
+
+        <div className="panel" style={{ marginTop: 20 }}>
+          <div className="section-heading" style={{ marginBottom: 12 }}>
+            <p className="eyebrow">Submission Mode</p>
+            <h2>{state.submissionMode === "open" ? "Open: safe memories go live instantly." : "Locked: admin approval required."}</h2>
+          </div>
+          <div className="admin-actions-row">
+            <button
+              className={state.submissionMode === "open" ? "primary-button" : "secondary-button"}
+              type="button"
+              onClick={() => void updateMode("open")}
+            >
+              Open
+            </button>
+            <button
+              className={state.submissionMode === "locked" ? "primary-button" : "secondary-button"}
+              type="button"
+              onClick={() => void updateMode("locked")}
+            >
+              Locked
+            </button>
+          </div>
         </div>
 
         <p className="microcopy">Current default admin key: `admin-password123`. Replace it before public launch.</p>

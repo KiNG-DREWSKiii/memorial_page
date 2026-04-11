@@ -2,7 +2,15 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
 import { hasAdminAccess } from "@/lib/admin";
-import { getSubmissionById, updateSubmissionStatus, createPhoto, createStory } from "@/lib/data-store";
+import {
+  createPhoto,
+  createStory,
+  deletePhotosBySubmissionId,
+  deleteStoriesBySubmissionId,
+  deleteSubmission,
+  getSubmissionById,
+  updateSubmissionStatus
+} from "@/lib/data-store";
 import { removeMediaFiles } from "@/lib/media-store";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +45,7 @@ export async function PATCH(request: Request, context: Context) {
       for (const file of updated.files) {
         if (file.kind === "image") {
           await createPhoto({
+            sourceSubmissionId: updated.id,
             imageUrl: file.url,
             caption: updated.message.length < 50 ? updated.message : null,
             name: updated.name,
@@ -50,6 +59,7 @@ export async function PATCH(request: Request, context: Context) {
     if (updated.message && updated.message.length >= 50) {
       const coverImage = updated.files?.find((f) => f.kind === "image")?.url || null;
       await createStory({
+        sourceSubmissionId: updated.id,
         title: null,
         body: updated.message,
         coverImage,
@@ -58,6 +68,11 @@ export async function PATCH(request: Request, context: Context) {
         featured: false
       });
     }
+  }
+
+  if (body.status === "rejected" && submission.status === "approved") {
+    await deletePhotosBySubmissionId(submission.id);
+    await deleteStoriesBySubmissionId(submission.id);
   }
 
   revalidatePath("/");
@@ -80,10 +95,14 @@ export async function DELETE(request: Request, context: Context) {
     return NextResponse.json({ error: "Submission not found." }, { status: 404 });
   }
 
-  await updateSubmissionStatus(id, "rejected", "Admin override.", 1);
+  await deletePhotosBySubmissionId(id);
+  await deleteStoriesBySubmissionId(id);
   await removeMediaFiles(submission.files);
+  await deleteSubmission(id);
 
   revalidatePath("/");
+  revalidatePath("/gallery");
+  revalidatePath("/stories");
   revalidatePath("/admin");
 
   return NextResponse.json({ success: true });
