@@ -1,19 +1,19 @@
-import type { Photo } from "@/lib/types";
+import type { SlideshowItem } from "@/lib/types";
 
-export function SlideshowBackground({ photos }: { photos: Photo[] }) {
-  const backgroundMedia = photos.slice(0, 8);
+export function SlideshowBackground({ items }: { items: SlideshowItem[] }) {
+  const backgroundMedia = items.slice(0, 8);
 
   return (
     <div className="background-shell" aria-hidden="true">
       <div className="background-gradient" />
       {backgroundMedia.length > 0 ? (
         <div className="background-slides">
-          {backgroundMedia.map((photo, index) => (
+          {backgroundMedia.map((item, index) => (
             <img
-              key={`${photo.id}-${index}`}
+              key={`${item.id}-${index}`}
               className="background-slide"
-              src={photo.imageUrl}
-              alt={photo.caption || ""}
+              src={item.imageUrl}
+              alt={item.alt}
               style={{ animationDelay: `${index * 8}s` }}
             />
           ))}
@@ -25,4 +25,3 @@ export function SlideshowBackground({ photos }: { photos: Photo[] }) {
     </div>
   );
 }
-

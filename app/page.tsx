@@ -2,6 +2,8 @@ import Link from "next/link";
 import { SlideshowBackground } from "@/components/slideshow-background";
 import { memorialConfig } from "@/lib/config";
 import { listPhotos, listStories } from "@/lib/data-store";
+import { shuffleArray } from "@/lib/utils";
+import type { SlideshowItem } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -11,13 +13,40 @@ export default async function HomePage() {
 
   const featuredPhotos = approvedPhotos.filter((p) => p.featured).slice(0, 4);
   const recentStories = approvedStories.slice(0, 3);
+  const featuredSlides: SlideshowItem[] = featuredPhotos.map((photo) => ({
+    id: `photo-${photo.id}`,
+    imageUrl: photo.imageUrl,
+    alt: photo.caption || "Memorial photo"
+  }));
+  const storyCoverSlides: SlideshowItem[] = approvedStories
+    .filter((story) => Boolean(story.coverImage))
+    .map((story) => ({
+      id: `story-${story.id}`,
+      imageUrl: story.coverImage as string,
+      alt: story.title || "Memorial story cover"
+    }));
+  const photoSlides: SlideshowItem[] = approvedPhotos.map((photo) => ({
+    id: `photo-${photo.id}`,
+    imageUrl: photo.imageUrl,
+    alt: photo.caption || "Memorial photo"
+  }));
+  const seenUrls = new Set(featuredSlides.map((item) => item.imageUrl));
+  const randomizedPool = shuffleArray([...storyCoverSlides, ...photoSlides]).filter((item) => {
+    if (seenUrls.has(item.imageUrl)) {
+      return false;
+    }
+
+    seenUrls.add(item.imageUrl);
+    return true;
+  });
+  const slideshowItems = [...featuredSlides, ...randomizedPool].slice(0, 8);
 
   // If no featured photos, just use the latest 4 for the strip
   const stripPhotos = featuredPhotos.length > 0 ? featuredPhotos : approvedPhotos.slice(0, 4);
 
   return (
     <main className="page-shell public-layout">
-      <SlideshowBackground photos={approvedPhotos} />
+      <SlideshowBackground items={slideshowItems} />
 
       <section className="hero-section center-hero">
         <div className="hero-copy text-center">

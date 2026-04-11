@@ -40,6 +40,12 @@ export type Photo = {
   createdAt: string;
 };
 
+export type SlideshowItem = {
+  id: string;
+  imageUrl: string;
+  alt: string;
+};
+
 export type Story = {
   id: string;
   memorialKey: string;
