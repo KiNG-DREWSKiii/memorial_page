@@ -1,8 +1,9 @@
-import { listStories } from "@/lib/data-store";
+import { listStories, syncMissingStoriesFromApprovedSubmissions } from "@/lib/data-store";
 
 export const dynamic = "force-dynamic";
 
 export default async function StoriesPage() {
+  await syncMissingStoriesFromApprovedSubmissions();
   const stories = await listStories(true);
 
   return (

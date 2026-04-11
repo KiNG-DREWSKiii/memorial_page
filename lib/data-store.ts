@@ -449,6 +449,23 @@ export async function listStories(onlyApproved = true) {
 export async function createStory(input: Omit<Story, "id" | "createdAt">) {
   if (isSupabaseConfigured()) {
     const supabase = createSupabaseAdminClient();
+    if (input.sourceSubmissionId) {
+      const { data: existingStory, error: existingError } = await supabase
+        .from("stories")
+        .select("*")
+        .eq("memorial_key", input.memorialKey)
+        .eq("source_submission_id", input.sourceSubmissionId)
+        .maybeSingle<StoryRow>();
+
+      if (existingError) {
+        throw existingError;
+      }
+
+      if (existingStory) {
+        return mapStoryRow(existingStory);
+      }
+    }
+
     const row = {
       id: createId(),
       memorial_key: input.memorialKey,
@@ -471,6 +488,18 @@ export async function createStory(input: Omit<Story, "id" | "createdAt">) {
   }
 
   const stories = await readData<Story>(storiesPath);
+  if (input.sourceSubmissionId) {
+    const existingStory = stories.find(
+      (story) =>
+        (story.memorialKey ?? memorialConfig.key) === input.memorialKey &&
+        story.sourceSubmissionId === input.sourceSubmissionId
+    );
+
+    if (existingStory) {
+      return existingStory;
+    }
+  }
+
   const story: Story = { ...input, id: createId(), createdAt: new Date().toISOString() };
   stories.push(story);
   await writeData(storiesPath, stories);
@@ -496,4 +525,27 @@ export async function deleteStoriesBySubmissionId(submissionId: string) {
   const stories = await readData<Story>(storiesPath);
   const nextStories = stories.filter((story) => story.sourceSubmissionId !== submissionId);
   await writeData(storiesPath, nextStories);
+}
+
+export async function syncMissingStoriesFromApprovedSubmissions() {
+  const approvedSubmissions = await listSubmissions("approved");
+
+  for (const submission of approvedSubmissions) {
+    if (!submission.message.trim()) {
+      continue;
+    }
+
+    const coverImage = submission.files.find((file) => file.kind === "image")?.url || null;
+
+    await createStory({
+      memorialKey: submission.memorialKey,
+      sourceSubmissionId: submission.id,
+      title: submission.message.trim().length <= 60 ? submission.message.trim() : null,
+      body: submission.message,
+      coverImage,
+      authorName: submission.name,
+      approved: true,
+      featured: false
+    });
+  }
 }
