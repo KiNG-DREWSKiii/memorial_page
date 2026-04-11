@@ -7,6 +7,7 @@ import type { Submission } from "@/lib/types";
 
 type AdminState = {
   key: string;
+  isAuthenticated: boolean;
   submissions: Submission[];
   submissionMode: "open" | "locked";
   status: "idle" | "loading" | "ready" | "error";
@@ -16,6 +17,7 @@ type AdminState = {
 
 const initialState: AdminState = {
   key: "",
+  isAuthenticated: false,
   submissions: [],
   submissionMode: "locked",
   status: "idle",
@@ -34,6 +36,13 @@ export function AdminPanel() {
     }
   }, []);
 
+  useEffect(() => {
+    const savedKey = window.sessionStorage.getItem("memorial-admin-key");
+    if (savedKey) {
+      void authenticate(savedKey);
+    }
+  }, []);
+
   async function loadSettings(nextKey = state.key) {
     const response = await fetch("/api/admin/settings", {
       headers: {
@@ -44,12 +53,17 @@ export function AdminPanel() {
     const payload = (await response.json()) as { settings?: { submissionMode?: "open" | "locked" }; error?: string };
 
     if (!response.ok) {
-      setState((current) => ({ ...current, error: payload.error ?? "Could not load settings." }));
+      setState((current) => ({
+        ...current,
+        isAuthenticated: false,
+        error: payload.error ?? "Could not load settings."
+      }));
       return;
     }
 
     setState((current) => ({
       ...current,
+      isAuthenticated: true,
       submissionMode: payload.settings?.submissionMode === "open" ? "open" : "locked"
     }));
   }
@@ -68,6 +82,7 @@ export function AdminPanel() {
     if (!response.ok) {
       setState((current) => ({
         ...current,
+        isAuthenticated: false,
         status: "error",
         submissions: [],
         error: payload.error ?? "Could not load admin data."
@@ -77,11 +92,46 @@ export function AdminPanel() {
 
     setState((current) => ({
       ...current,
+      isAuthenticated: true,
       status: "ready",
       submissions: payload.submissions ?? [],
       filter: nextFilter,
       error: ""
     }));
+  }
+
+  async function authenticate(nextKey = state.key) {
+    setState((current) => ({ ...current, status: "loading", error: "" }));
+    const settingsResponse = await fetch("/api/admin/settings", {
+      headers: {
+        "x-admin-key": nextKey
+      }
+    });
+
+    const settingsPayload = (await settingsResponse.json()) as {
+      settings?: { submissionMode?: "open" | "locked" };
+      error?: string;
+    };
+
+    if (!settingsResponse.ok) {
+      window.sessionStorage.removeItem("memorial-admin-key");
+      setState((current) => ({
+        ...current,
+        isAuthenticated: false,
+        status: "error",
+        error: settingsPayload.error ?? "Invalid admin key."
+      }));
+      return;
+    }
+
+    window.sessionStorage.setItem("memorial-admin-key", nextKey);
+    setState((current) => ({
+      ...current,
+      isAuthenticated: true,
+      submissionMode: settingsPayload.settings?.submissionMode === "open" ? "open" : "locked"
+    }));
+
+    await loadSubmissions("pending", nextKey);
   }
 
   async function updateMode(nextMode: "open" | "locked") {
@@ -134,30 +184,58 @@ export function AdminPanel() {
     });
   }
 
+  function logout() {
+    window.sessionStorage.removeItem("memorial-admin-key");
+    setState({
+      ...initialState,
+      key: ""
+    });
+  }
+
+  if (!state.isAuthenticated) {
+    return (
+      <section className="admin-shell">
+        <div className="panel admin-auth">
+          <div className="section-heading">
+            <p className="eyebrow">Admin</p>
+            <h2>Enter admin key</h2>
+          </div>
+
+          <label className="field">
+            <span>Admin key</span>
+            <input
+              type="password"
+              value={state.key}
+              onChange={(event) => setState((current) => ({ ...current, key: event.target.value, error: "" }))}
+              placeholder="Enter admin key"
+            />
+          </label>
+
+          <div className="admin-actions-row">
+            <button className="primary-button" type="button" onClick={() => void authenticate()} disabled={!state.key}>
+              {state.status === "loading" ? "Checking..." : "Enter"}
+            </button>
+          </div>
+
+          {state.error ? <p className="submission-message is-error">{state.error}</p> : null}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="admin-shell">
       <div className="panel admin-auth">
         <div className="section-heading">
           <p className="eyebrow">Admin</p>
-          <h1>Review submissions to add to the memorial.</h1>
+          <h2>Submission review</h2>
         </div>
-
-        <label className="field">
-          <span>Admin key</span>
-          <input
-            type="password"
-            value={state.key}
-            onChange={(event) => setState((current) => ({ ...current, key: event.target.value }))}
-            placeholder="Enter admin key"
-          />
-        </label>
 
         <div className="admin-actions-row">
           <button
             className="primary-button"
             type="button"
             onClick={() => {
-              window.sessionStorage.setItem("memorial-admin-key", state.key);
               void loadSettings(state.key);
               void loadSubmissions("pending");
             }}
@@ -169,6 +247,9 @@ export function AdminPanel() {
           </button>
           <button className="secondary-button" type="button" onClick={() => void loadSubmissions("rejected")}>
             Rejected
+          </button>
+          <button className="secondary-button" type="button" onClick={logout}>
+            Log Out
           </button>
         </div>
 
