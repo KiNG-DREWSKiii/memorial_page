@@ -22,13 +22,17 @@ export function SlideshowBackground({ items }: { items: SlideshowItem[] }) {
                 </div>
               </div>
             ) : (
-              <img
+              <div
                 key={`${item.id}-${index}`}
-                className="memory-carousel-slide"
-                src={item.imageUrl || ""}
-                alt={item.alt || ""}
+                className="memory-carousel-slide memory-image-slide"
                 style={{ animationDelay: `${index * 9}s` }}
-              />
+              >
+                <img
+                  className="memory-carousel-image"
+                  src={item.imageUrl || ""}
+                  alt={item.alt || ""}
+                />
+              </div>
             )
           )}
           </div>

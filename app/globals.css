@@ -94,12 +94,22 @@ textarea {
 .memory-carousel-slide {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
   opacity: 0;
   filter: saturate(0.88);
   animation: fadeSlide 72s infinite;
+}
+
+.memory-image-slide {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.memory-carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 28px;
 }
 
 .memory-message-slide {
@@ -621,33 +631,6 @@ h2 {
   align-items: center;
 }
 
-/* NEW STYLES: Photo Strip */
-.photo-strip {
-  width: 100%;
-  overflow: hidden;
-  padding: 40px 0;
-  background: rgba(255, 255, 255, 0.2);
-}
-.strip-container {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding: 0 32px;
-  scrollbar-width: none;
-}
-.strip-item {
-  flex: 0 0 300px;
-  height: 200px;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-.strip-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 /* NEW STYLES: Gallery Masonry */
 .masonry-grid {
   column-count: 3;
@@ -720,29 +703,6 @@ h2 {
 .empty-state {
   margin-top: 80px;
   color: var(--muted);
-}
-.recent-stories-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-  margin-top: 40px;
-}
-.story-card {
-  background: var(--panel);
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: var(--shadow);
-}
-.quote-block {
-  text-align: center;
-  max-width: 700px;
-  margin: 60px auto;
-}
-.quote-text {
-  font-family: var(--font-serif);
-  font-size: 1.8rem;
-  color: var(--warm);
-  font-style: italic;
 }
 .soft-cta-panel {
   max-width: 600px;

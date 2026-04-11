@@ -12,7 +12,6 @@ export default async function HomePage() {
   const approvedStories = await listStories(true);
 
   const featuredPhotos = approvedPhotos.filter((p) => p.featured).slice(0, 4);
-  const recentStories = approvedStories.slice(0, 3);
   const featuredSlides: SlideshowItem[] = featuredPhotos.map((photo) => ({
     id: `photo-${photo.id}`,
     kind: "image",
@@ -69,9 +68,6 @@ export default async function HomePage() {
 
   const slideshowItems = [...featuredSlides, ...alternatingPool].slice(0, maxSlides);
 
-  // If no featured photos, just use the latest 4 for the strip
-  const stripPhotos = featuredPhotos.length > 0 ? featuredPhotos : approvedPhotos.slice(0, 4);
-
   return (
     <main className="page-shell public-layout">
       <section className="hero-section center-hero">
@@ -98,48 +94,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured Photo Strip */}
-      {stripPhotos.length > 0 && (
-        <section className="photo-strip">
-          <div className="strip-container">
-            {stripPhotos.map((photo) => (
-              <div key={photo.id} className="strip-item">
-                <img src={photo.imageUrl} alt={photo.caption || "Memorial Photo"} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
       {slideshowItems.length > 0 && <SlideshowBackground items={slideshowItems} />}
-
-      {/* Recent Stories & Quote */}
-      <section className="stories-preview-section">
-        <div className="container">
-          <div className="quote-block">
-            <p className="quote-text">
-              "Stories, photographs, and moments that continue to live on."
-            </p>
-          </div>
-          
-          {recentStories.length > 0 && (
-            <div className="recent-stories-grid">
-              {recentStories.map((story) => (
-                <div key={story.id} className="story-card">
-                  {story.coverImage && (
-                    <img src={story.coverImage} className="story-card-image" alt="" />
-                  )}
-                  <div className="story-card-content">
-                    <h3>{story.title || "Shared Memory"}</h3>
-                    <p className="story-meta">Shared by {story.authorName || "Family/Friends"}</p>
-                    <p className="story-excerpt">{story.body.substring(0, 100)}...</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
       <section className="bottom-cta-section">
         <div className="panel soft-cta-panel">
