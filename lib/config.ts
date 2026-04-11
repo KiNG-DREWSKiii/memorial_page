@@ -17,3 +17,11 @@ export const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_S
 export const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY ?? "";
 export const supabaseStorageBucket = process.env.SUPABASE_STORAGE_BUCKET ?? "memorial-media";
+
+export const uploadLimits = {
+  maxMediaFiles: 6,
+  maxImageFiles: 5,
+  maxVideoFiles: 1,
+  maxImageBytes: 15 * 1024 * 1024,
+  maxVideoBytes: 80 * 1024 * 1024
+} as const;

@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 
 import { memorialConfig } from "@/lib/config";
 import { createSubmission, getSiteSettings } from "@/lib/data-store";
+import { validateMediaSelection } from "@/lib/media-rules";
 import { removeMediaFiles, saveMediaFiles } from "@/lib/media-store";
 import { moderateMemorialPost } from "@/lib/moderation";
 import { publishSubmissionArtifacts } from "@/lib/publishing";
@@ -16,9 +17,14 @@ export async function POST(request: Request) {
   const files = formData
     .getAll("media")
     .filter((value): value is File => value instanceof File && value.size > 0);
+  const mediaValidationError = validateMediaSelection(files);
 
   if (!message && files.length === 0) {
     return NextResponse.json({ error: "Please share a message or photo." }, { status: 400 });
+  }
+
+  if (mediaValidationError) {
+    return NextResponse.json({ error: mediaValidationError }, { status: 400 });
   }
 
   const media = await saveMediaFiles(files);

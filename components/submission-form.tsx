@@ -1,15 +1,53 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+
+import { uploadLimits } from "@/lib/config";
+import { validateMediaSelection } from "@/lib/media-rules";
 
 export function SubmissionForm() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [resultMessage, setResultMessage] = useState("");
+  const [selectionMessage, setSelectionMessage] = useState("");
+
+  function handleFilesChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    if (files.length === 0) {
+      setSelectionMessage("");
+      return;
+    }
+
+    const validationError = validateMediaSelection(files);
+    if (validationError) {
+      setError(validationError);
+      setSelectionMessage("");
+      event.target.value = "";
+      return;
+    }
+
+    setError("");
+    const imageCount = files.filter((file) => file.type.startsWith("image/")).length;
+    const videoCount = files.filter((file) => file.type.startsWith("video/")).length;
+    const parts = [];
+
+    if (imageCount > 0) {
+      parts.push(`${imageCount} photo${imageCount === 1 ? "" : "s"}`);
+    }
+
+    if (videoCount > 0) {
+      parts.push(`${videoCount} video`);
+    }
+
+    setSelectionMessage(
+      `${parts.join(" and ")} selected. Limit ${uploadLimits.maxImageFiles} photos and ${uploadLimits.maxVideoFiles} video per submission.`
+    );
+  }
 
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
@@ -32,6 +70,10 @@ export function SubmissionForm() {
       setResultMessage(payload.message || "Your memory has been received.");
       setSubmitted(true);
       formRef.current?.reset();
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      setSelectionMessage("");
       router.refresh();
     } catch {
       setError("Unable to send your memory. Please try again.");
@@ -62,7 +104,7 @@ export function SubmissionForm() {
     >
       <div className="section-heading">
         <p className="eyebrow">Share a Memory</p>
-        <h2>Leave words or photographs.</h2>
+        <h2>Share a message, photo, or short video.</h2>
       </div>
 
       <label className="field">
@@ -83,9 +125,21 @@ export function SubmissionForm() {
       </label>
 
       <label className="field">
-        <span>Photos</span>
-        <input name="media" type="file" accept="image/*" multiple />
+        <span>Photos or video</span>
+        <input
+          ref={fileInputRef}
+          name="media"
+          type="file"
+          accept="image/*,video/*"
+          multiple
+          onChange={handleFilesChange}
+        />
       </label>
+
+      <p className="microcopy">
+        Up to {uploadLimits.maxImageFiles} photos and {uploadLimits.maxVideoFiles} video per submission.
+      </p>
+      {selectionMessage ? <p className="microcopy">{selectionMessage}</p> : null}
 
       <div className="form-footer">
         <button className="primary-button" type="submit" disabled={isSubmitting}>
