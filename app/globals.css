@@ -57,81 +57,94 @@ textarea {
   padding: 32px;
 }
 
-.background-shell {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
+.memory-carousel-section {
+  position: relative;
+  z-index: 1;
+  padding: 32px 0 20px;
 }
 
-.background-slides,
-.background-fallback,
-.background-gradient,
-.background-vignette {
+.memory-carousel-shell {
+  position: relative;
+  height: clamp(340px, 48vw, 560px);
+  overflow: hidden;
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 28px 90px rgba(74, 58, 53, 0.12);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(244, 143, 177, 0.08), transparent 28%),
+    radial-gradient(circle at 70% 30%, rgba(255, 248, 221, 0.16), transparent 32%),
+    linear-gradient(180deg, rgba(255, 250, 251, 0.72), rgba(255, 250, 251, 0.92));
+}
+
+.memory-carousel-slides,
+.memory-carousel-fallback,
+.memory-carousel-gradient,
+.memory-carousel-vignette {
   position: absolute;
   inset: 0;
 }
 
-.background-fallback {
+.memory-carousel-fallback {
   background:
     radial-gradient(circle at 20% 20%, rgba(244, 143, 177, 0.1), transparent 28%),
     radial-gradient(circle at 70% 30%, rgba(255, 248, 221, 0.2), transparent 32%),
     linear-gradient(180deg, rgba(255, 250, 251, 0.7), rgba(255, 250, 251, 0.92));
 }
 
-.background-slide {
+.memory-carousel-slide {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  filter: blur(10px) saturate(0.8);
-  animation: fadeSlide 32s infinite;
+  filter: saturate(0.88);
+  animation: fadeSlide 72s infinite;
 }
 
-.background-message-slide {
+.memory-message-slide {
   display: grid;
   place-items: center;
-  padding: 8vw;
+  padding: clamp(24px, 5vw, 72px);
 }
 
-.background-message-card {
-  max-width: 860px;
-  padding: clamp(24px, 4vw, 40px);
+.memory-message-card {
+  max-width: 900px;
+  padding: clamp(28px, 4vw, 44px);
   border-radius: 32px;
-  background: rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.52);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(14px);
   box-shadow: 0 30px 80px rgba(74, 58, 53, 0.08);
 }
 
-.background-message-text {
+.memory-message-text {
   margin: 0;
   color: #4a3a35;
   font-family: var(--font-serif), serif;
-  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-size: clamp(1.5rem, 3.2vw, 2.7rem);
   line-height: 1.2;
   text-align: center;
 }
 
-.background-message-byline {
+.memory-message-byline {
   display: block;
   margin-top: 18px;
   color: rgba(74, 58, 53, 0.72);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-align: center;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
 }
 
-.background-gradient {
-  background: linear-gradient(180deg, rgba(255, 250, 251, 0.1), rgba(255, 250, 251, 0.4));
+.memory-carousel-gradient {
+  background: linear-gradient(180deg, rgba(255, 250, 251, 0.08), rgba(255, 250, 251, 0.16));
 }
 
-.background-vignette {
+.memory-carousel-vignette {
   background:
-    radial-gradient(circle at center, transparent 0%, rgba(255, 250, 251, 0.1) 100%);
+    linear-gradient(180deg, rgba(255, 250, 251, 0.08) 0%, rgba(255, 250, 251, 0.16) 100%),
+    radial-gradient(circle at center, transparent 10%, rgba(255, 250, 251, 0.18) 100%);
 }
 
 .hero-section,
@@ -486,14 +499,14 @@ h2 {
 
 @keyframes fadeSlide {
   0%,
-  12% {
+  10% {
     opacity: 0;
   }
-  18%,
-  30% {
-    opacity: 0.48;
+  14%,
+  24% {
+    opacity: 1;
   }
-  36%,
+  30%,
   100% {
     opacity: 0;
   }
@@ -520,6 +533,10 @@ h2 {
 
   .timeline-meta {
     flex-direction: column;
+  }
+
+  .memory-carousel-shell {
+    height: 420px;
   }
 }
 

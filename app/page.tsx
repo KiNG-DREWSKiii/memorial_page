@@ -74,8 +74,6 @@ export default async function HomePage() {
 
   return (
     <main className="page-shell public-layout">
-      <SlideshowBackground items={slideshowItems} />
-
       <section className="hero-section center-hero">
         <div className="hero-copy text-center">
           <p className="eyebrow">In Loving Memory</p>
@@ -112,6 +110,8 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {slideshowItems.length > 0 && <SlideshowBackground items={slideshowItems} />}
 
       {/* Recent Stories & Quote */}
       <section className="stories-preview-section">
