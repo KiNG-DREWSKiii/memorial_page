@@ -1,29 +1,49 @@
-import { listPhotos } from "@/lib/data-store";
+import { listSubmissions } from "@/lib/data-store";
 
 export const dynamic = "force-dynamic";
 
 export default async function GalleryPage() {
-  const photos = await listPhotos(true);
+  const submissions = await listSubmissions("approved");
+  const mediaItems = submissions.flatMap((submission) =>
+    submission.files.map((file, index) => ({
+      id: `${submission.id}-${index}`,
+      kind: file.kind,
+      url: file.url,
+      thumbnailUrl: file.thumbnailUrl,
+      caption: submission.message || null,
+      name: submission.name
+    }))
+  );
 
   return (
     <main className="page-shell public-layout">
       <div className="container">
         <div className="section-heading text-center">
           <h1>Gallery</h1>
-          <p className="hero-message">Photographs lovingly added to the memorial.</p>
+          <p className="hero-message">Photographs and videos lovingly added to the memorial.</p>
         </div>
 
-        {photos.length === 0 ? (
-          <p className="text-center empty-state">No photographs have been added yet.</p>
+        {mediaItems.length === 0 ? (
+          <p className="text-center empty-state">No photographs or videos have been added yet.</p>
         ) : (
           <div className="masonry-grid">
-            {photos.map((photo) => (
-              <div key={photo.id} className="masonry-item">
-                <img src={photo.imageUrl} alt={photo.caption || "Memorial Photo"} />
-                {(photo.caption || photo.name) && (
+            {mediaItems.map((item) => (
+              <div key={item.id} className="masonry-item">
+                {item.kind === "video" ? (
+                  <video
+                    className="gallery-video"
+                    src={item.url}
+                    poster={item.thumbnailUrl || undefined}
+                    controls
+                    preload="metadata"
+                  />
+                ) : (
+                  <img src={item.url} alt={item.caption || "Memorial Photo"} />
+                )}
+                {(item.caption || item.name) && (
                   <div className="photo-meta">
-                    {photo.caption && <p>{photo.caption}</p>}
-                    {photo.name && <span>Shared by {photo.name}</span>}
+                    {item.caption && <p>{item.caption}</p>}
+                    {item.name && <span>Shared by {item.name}</span>}
                   </div>
                 )}
               </div>

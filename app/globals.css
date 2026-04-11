@@ -651,6 +651,13 @@ h2 {
   border-radius: 12px;
   display: block;
 }
+
+.gallery-video {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+  background: rgba(74, 58, 53, 0.08);
+}
 .photo-meta {
   margin-top: 12px;
   font-size: 0.9rem;
