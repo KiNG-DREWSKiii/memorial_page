@@ -14,7 +14,10 @@ export function SlideshowBackground({ items }: { items: SlideshowItem[] }) {
               <div
                 key={`${item.id}-${index}`}
                 className="memory-carousel-slide memory-message-slide"
-                style={{ animationDelay: `${index * 9}s` }}
+                style={{
+                  animationDelay: `${index * 9}s`,
+                  opacity: index === 0 ? 1 : undefined
+                }}
               >
                 <div className="memory-message-card">
                   <p className="memory-message-text">“{item.message}”</p>
@@ -25,12 +28,17 @@ export function SlideshowBackground({ items }: { items: SlideshowItem[] }) {
               <div
                 key={`${item.id}-${index}`}
                 className="memory-carousel-slide memory-image-slide"
-                style={{ animationDelay: `${index * 9}s` }}
+                style={{
+                  animationDelay: `${index * 9}s`,
+                  opacity: index === 0 ? 1 : undefined
+                }}
               >
                 <img
                   className="memory-carousel-image"
                   src={item.imageUrl || ""}
                   alt={item.alt || ""}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
                 />
               </div>
             )

@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { SlideshowBackground } from "@/components/slideshow-background";
 import { memorialConfig } from "@/lib/config";
-import { listPhotos, listStories } from "@/lib/data-store";
+import { listPhotos, listStories, syncMissingStoriesFromApprovedSubmissions } from "@/lib/data-store";
 import { shuffleArray } from "@/lib/utils";
 import type { SlideshowItem } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
+  await syncMissingStoriesFromApprovedSubmissions();
   const approvedPhotos = await listPhotos(true);
   const approvedStories = await listStories(true);
 

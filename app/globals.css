@@ -509,14 +509,14 @@ h2 {
 
 @keyframes fadeSlide {
   0%,
-  10% {
-    opacity: 0;
-  }
-  14%,
-  24% {
+  12% {
     opacity: 1;
   }
-  30%,
+  18%,
+  28% {
+    opacity: 1;
+  }
+  36%,
   100% {
     opacity: 0;
   }
