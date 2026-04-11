@@ -29,12 +29,12 @@ export function validateMediaSelection(files: UploadCandidate[]) {
 
   const oversizedImage = imageFiles.find((file) => file.size > uploadLimits.maxImageBytes);
   if (oversizedImage) {
-    return `${oversizedImage.name} is too large. Photos must be under 15 MB.`;
+    return `${oversizedImage.name} is too large. Photos must be under 12 MB.`;
   }
 
   const oversizedVideo = videoFiles.find((file) => file.size > uploadLimits.maxVideoBytes);
   if (oversizedVideo) {
-    return `${oversizedVideo.name} is too large. Videos must be under 80 MB.`;
+    return `${oversizedVideo.name} is too large. Videos must be under 35 MB.`;
   }
 
   return null;

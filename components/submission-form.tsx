@@ -137,7 +137,10 @@ export function SubmissionForm() {
       </label>
 
       <p className="microcopy">
-        Up to {uploadLimits.maxImageFiles} photos and {uploadLimits.maxVideoFiles} video per submission.
+        Up to {uploadLimits.maxImageFiles} photos and {uploadLimits.maxVideoFiles} short video per submission.
+      </p>
+      <p className="microcopy">
+        Photos up to 12 MB each. Video up to 35 MB.
       </p>
       {selectionMessage ? <p className="microcopy">{selectionMessage}</p> : null}
 
