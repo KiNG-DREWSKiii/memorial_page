@@ -80,6 +80,16 @@ export default async function HomePage() {
         <div className="hero-copy text-center">
           <p className="eyebrow">In Loving Memory</p>
           <h1>{memorialConfig.name}</h1>
+          <div className="hero-portrait-frame" aria-hidden="true">
+            {memorialConfig.portraitUrl ? (
+              <img className="hero-portrait-image" src={memorialConfig.portraitUrl} alt={`${memorialConfig.name} portrait`} />
+            ) : (
+              <div className="hero-portrait-placeholder">
+                <div className="hero-silhouette-head" />
+                <div className="hero-silhouette-body" />
+              </div>
+            )}
+          </div>
           <p className="dates">{memorialConfig.dates}</p>
           <p className="hero-message">{memorialConfig.message}</p>
           <div className="hero-actions center-actions">
@@ -120,7 +130,7 @@ export default async function HomePage() {
                     <img src={story.coverImage} className="story-card-image" alt="" />
                   )}
                   <div className="story-card-content">
-                    <h3>{story.title}</h3>
+                    <h3>{story.title || "Shared Memory"}</h3>
                     <p className="story-meta">Shared by {story.authorName || "Family/Friends"}</p>
                     <p className="story-excerpt">{story.body.substring(0, 100)}...</p>
                   </div>

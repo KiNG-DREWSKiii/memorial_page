@@ -16,12 +16,12 @@ export async function publishSubmissionArtifacts(submission: Submission) {
     }
   }
 
-  if (submission.message && submission.message.length >= 50) {
+  if (submission.message.trim().length > 0) {
     const coverImage = submission.files.find((f) => f.kind === "image")?.url || null;
     await createStory({
       memorialKey: submission.memorialKey,
       sourceSubmissionId: submission.id,
-      title: null,
+      title: submission.message.trim().length <= 60 ? submission.message.trim() : null,
       body: submission.message,
       coverImage,
       authorName: submission.name,

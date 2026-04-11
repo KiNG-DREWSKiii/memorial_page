@@ -1,6 +1,7 @@
 export const memorialConfig = {
   key: process.env.MEMORIAL_KEY ?? "jaylyn-reese-fehr",
   name: process.env.MEMORIAL_NAME ?? "Jaylyn Reese Fehr",
+  portraitUrl: process.env.MEMORIAL_PORTRAIT_URL ?? "",
   dates: process.env.MEMORIAL_DATES ?? "2008 – April 6, 2026",
   message:
     process.env.MEMORIAL_MESSAGE ??

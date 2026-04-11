@@ -23,7 +23,7 @@ export default async function StoriesPage() {
                   <img src={story.coverImage} className="story-cover" alt="" />
                 )}
                 <div className="story-content">
-                  {story.title && <h2>{story.title}</h2>}
+                  <h2>{story.title || "Shared Memory"}</h2>
                   <p className="story-meta">Shared by {story.authorName || "Family/Friends"}</p>
                   <div className="story-body" style={{ whiteSpace: "pre-wrap" }}>
                     {story.body}
