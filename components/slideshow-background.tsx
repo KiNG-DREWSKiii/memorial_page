@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { SlideshowItem } from "@/lib/types";
 
@@ -18,19 +18,30 @@ function shuffleItems(items: SlideshowItem[]) {
 }
 
 function buildInitialQueue(items: SlideshowItem[]) {
-  return shuffleItems(items);
+  if (items.length <= 1) {
+    return items;
+  }
+
+  const firstImageIndex = items.findIndex((item) => item.kind === "image");
+
+  if (firstImageIndex <= 0) {
+    return items;
+  }
+
+  return [items[firstImageIndex], ...items.slice(0, firstImageIndex), ...items.slice(firstImageIndex + 1)];
 }
 
 export function SlideshowBackground({ items }: { items: SlideshowItem[] }) {
-  const [queue, setQueue] = useState(() => buildInitialQueue(items));
+  const initialQueue = useMemo(() => buildInitialQueue(items), [items]);
+  const [queue, setQueue] = useState(initialQueue);
   const [activeIndex, setActiveIndex] = useState(0);
   const activeItem = queue[activeIndex] ?? null;
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setQueue(buildInitialQueue(items));
+    setQueue(initialQueue);
     setActiveIndex(0);
-  }, [items]);
+  }, [initialQueue]);
 
   useEffect(() => {
     if (queue.length <= 1) {
