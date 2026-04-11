@@ -91,7 +91,6 @@ export function SubmissionForm() {
         <button className="primary-button" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Sending..." : "Submit"}
         </button>
-        <p className="microcopy">When submissions are open, safe memories can appear instantly. When locked, they go to admin review.</p>
       </div>
 
       {error ? <p className="submission-message is-error">{error}</p> : null}

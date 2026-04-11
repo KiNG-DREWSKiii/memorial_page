@@ -148,7 +148,7 @@ export function AdminPanel() {
             type="password"
             value={state.key}
             onChange={(event) => setState((current) => ({ ...current, key: event.target.value }))}
-            placeholder="Set ADMIN_ACCESS_KEY in .env"
+            placeholder="Enter admin key"
           />
         </label>
 
@@ -195,7 +195,6 @@ export function AdminPanel() {
           </div>
         </div>
 
-        <p className="microcopy">Current default admin key: `admin-password123`. Replace it before public launch.</p>
         {state.error ? <p className="submission-message is-error">{state.error}</p> : null}
       </div>
 
