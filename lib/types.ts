@@ -42,8 +42,11 @@ export type Photo = {
 
 export type SlideshowItem = {
   id: string;
-  imageUrl: string;
-  alt: string;
+  kind: "image" | "message";
+  imageUrl?: string | null;
+  alt?: string;
+  message?: string;
+  byline?: string | null;
 };
 
 export type Story = {

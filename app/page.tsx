@@ -15,6 +15,7 @@ export default async function HomePage() {
   const recentStories = approvedStories.slice(0, 3);
   const featuredSlides: SlideshowItem[] = featuredPhotos.map((photo) => ({
     id: `photo-${photo.id}`,
+    kind: "image",
     imageUrl: photo.imageUrl,
     alt: photo.caption || "Memorial photo"
   }));
@@ -22,16 +23,26 @@ export default async function HomePage() {
     .filter((story) => Boolean(story.coverImage))
     .map((story) => ({
       id: `story-${story.id}`,
+      kind: "image",
       imageUrl: story.coverImage as string,
       alt: story.title || "Memorial story cover"
     }));
   const photoSlides: SlideshowItem[] = approvedPhotos.map((photo) => ({
     id: `photo-${photo.id}`,
+    kind: "image",
     imageUrl: photo.imageUrl,
     alt: photo.caption || "Memorial photo"
   }));
+  const messageSlides: SlideshowItem[] = approvedStories
+    .filter((story) => story.body.trim().length > 0)
+    .map((story) => ({
+      id: `message-${story.id}`,
+      kind: "message",
+      message: story.body.trim().length > 190 ? `${story.body.trim().slice(0, 190)}...` : story.body.trim(),
+      byline: story.authorName || "Family/Friends"
+    }));
   const seenUrls = new Set(featuredSlides.map((item) => item.imageUrl));
-  const randomizedPool = shuffleArray([...storyCoverSlides, ...photoSlides]).filter((item) => {
+  const randomizedImagePool = shuffleArray([...storyCoverSlides, ...photoSlides]).filter((item) => {
     if (seenUrls.has(item.imageUrl)) {
       return false;
     }
@@ -39,7 +50,24 @@ export default async function HomePage() {
     seenUrls.add(item.imageUrl);
     return true;
   });
-  const slideshowItems = [...featuredSlides, ...randomizedPool].slice(0, 8);
+  const randomizedMessagePool = shuffleArray(messageSlides);
+  const alternatingPool: SlideshowItem[] = [];
+  const maxSlides = 8;
+
+  while (
+    alternatingPool.length < maxSlides &&
+    (randomizedImagePool.length > 0 || randomizedMessagePool.length > 0)
+  ) {
+    if (randomizedImagePool.length > 0) {
+      alternatingPool.push(randomizedImagePool.shift() as SlideshowItem);
+    }
+
+    if (alternatingPool.length < maxSlides && randomizedMessagePool.length > 0) {
+      alternatingPool.push(randomizedMessagePool.shift() as SlideshowItem);
+    }
+  }
+
+  const slideshowItems = [...featuredSlides, ...alternatingPool].slice(0, maxSlides);
 
   // If no featured photos, just use the latest 4 for the strip
   const stripPhotos = featuredPhotos.length > 0 ? featuredPhotos : approvedPhotos.slice(0, 4);
