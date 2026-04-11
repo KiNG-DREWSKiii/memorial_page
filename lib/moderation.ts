@@ -30,10 +30,15 @@ const schema = {
 const rejectPatterns = [
   /\b(?:kill yourself|hate(?:ful)?|nazi|slur)\b/i,
   /\b(?:scam|bitcoin giveaway|click here|buy now)\b/i,
-  /\b(?:liar|criminal|cheated|stole|abused)\b/i
+  /\b(?:liar|criminal|cheated|stole|abused|deserved it)\b/i,
+  /\b(?:http:\/\/|https:\/\/|www\.)\S+/i
 ];
 
-const flagPatterns = [/\b(?:maybe|rumor|heard that|not sure)\b/i, /\b(?:politics|lawsuit|inheritance)\b/i];
+const flagPatterns = [
+  /\b(?:maybe|rumou?r|heard that|not sure|allegedly|supposedly)\b/i,
+  /\b(?:politics|lawsuit|inheritance|investigation|custody)\b/i,
+  /\b(?:why did|what happened|is it true|someone said)\b/i
+];
 
 function fallbackModeration(content: string): ModerationResult {
   if (rejectPatterns.some((pattern) => pattern.test(content))) {

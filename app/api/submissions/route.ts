@@ -10,6 +10,9 @@ import { publishSubmissionArtifacts } from "@/lib/publishing";
 
 export const dynamic = "force-dynamic";
 
+const AUTO_APPROVE_CONFIDENCE = 0.9;
+const MIN_REJECT_CONFIDENCE = 0.85;
+
 export async function POST(request: Request) {
   const formData = await request.formData();
   const name = String(formData.get("name") || "").trim() || null;
@@ -31,12 +34,14 @@ export async function POST(request: Request) {
   const moderation = await moderateMemorialPost(name, message, media);
   const settings = await getSiteSettings();
   const status =
-    moderation.decision === "REJECT"
+    moderation.decision === "REJECT" && moderation.confidence >= MIN_REJECT_CONFIDENCE
       ? "rejected"
-      : settings.submissionMode === "open" && moderation.decision === "APPROVE"
-        ? "approved"
-        : moderation.decision === "FLAG"
-          ? "flagged"
+      : moderation.decision === "FLAG"
+        ? "flagged"
+        : moderation.decision === "APPROVE" &&
+            moderation.confidence >= AUTO_APPROVE_CONFIDENCE &&
+            settings.submissionMode === "open"
+          ? "approved"
           : "pending";
 
   if (status === "rejected") {
