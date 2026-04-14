@@ -69,7 +69,10 @@ function buildInput(name: string | null, content: string, media: MediaAsset[]) {
     media.length === 0
       ? "No media attached."
       : media
-          .map((asset) => `${asset.kind}:${asset.fileName} (${asset.mimeType})`)
+          .map(
+            (asset) =>
+              `${asset.kind}:${asset.fileName} (${asset.mimeType})${asset.caption ? ` caption="${asset.caption}"` : ""}`
+          )
           .join(", ");
 
   return {

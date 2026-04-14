@@ -49,13 +49,14 @@ async function uploadToSupabase(pathName: string, body: Buffer, contentType: str
   return data.publicUrl;
 }
 
-export async function saveMediaFiles(files: File[]) {
+export async function saveMediaFiles(files: File[], captions: string[] = []) {
   await mkdir(uploadDir, { recursive: true });
 
   const assets = await Promise.all(
-    files.map(async (file) => {
+    files.map(async (file, index) => {
       const bytes = Buffer.from(await file.arrayBuffer());
       const kind = file.type.startsWith("video/") ? "video" : "image";
+      const caption = captions[index]?.trim() || null;
 
       if (kind === "image") {
         const assetId = createId();
@@ -83,7 +84,8 @@ export async function saveMediaFiles(files: File[]) {
           thumbnailUrl,
           kind,
           mimeType: "image/webp",
-          fileName: file.name
+          fileName: file.name,
+          caption
         };
 
         return asset;
@@ -106,7 +108,8 @@ export async function saveMediaFiles(files: File[]) {
         thumbnailUrl: null,
         kind,
         mimeType: file.type || "application/octet-stream",
-        fileName: file.name
+        fileName: file.name,
+        caption
       };
 
       return asset;

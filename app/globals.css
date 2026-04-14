@@ -655,6 +655,14 @@ h2 {
   display: block;
 }
 
+.gallery-item-kind {
+  margin-bottom: 10px;
+  color: rgba(74, 58, 53, 0.62);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .gallery-video {
   width: 100%;
   display: block;
@@ -696,13 +704,6 @@ h2 {
 .story-article {
   padding: 32px;
 }
-.story-cover {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 16px;
-  margin-bottom: 24px;
-}
 .story-meta {
   color: var(--muted);
   margin-bottom: 16px;
@@ -711,6 +712,59 @@ h2 {
 .story-body {
   line-height: 1.8;
   font-size: 1.1rem;
+}
+.story-media-shell {
+  margin-bottom: 24px;
+}
+
+.story-media-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.story-media-item {
+  display: block;
+  max-width: 100%;
+  max-height: 560px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 16px;
+}
+
+.story-media-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.story-media-count {
+  min-width: 64px;
+  text-align: center;
+  color: rgba(74, 58, 53, 0.7);
+  font-size: 0.9rem;
+}
+
+.story-media-caption {
+  margin-top: 12px;
+  color: rgba(74, 58, 53, 0.74);
+}
+
+.media-caption-list {
+  display: grid;
+  gap: 14px;
+}
+
+.media-caption-field {
+  margin-bottom: 0;
 }
 .empty-state {
   margin-top: 80px;

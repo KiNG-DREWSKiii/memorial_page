@@ -15,10 +15,14 @@ export function SubmissionForm() {
   const [error, setError] = useState("");
   const [resultMessage, setResultMessage] = useState("");
   const [selectionMessage, setSelectionMessage] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [mediaCaptions, setMediaCaptions] = useState<string[]>([]);
 
   function handleFilesChange(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
     if (files.length === 0) {
+      setSelectedFiles([]);
+      setMediaCaptions([]);
       setSelectionMessage("");
       return;
     }
@@ -26,12 +30,16 @@ export function SubmissionForm() {
     const validationError = validateMediaSelection(files);
     if (validationError) {
       setError(validationError);
+      setSelectedFiles([]);
+      setMediaCaptions([]);
       setSelectionMessage("");
       event.target.value = "";
       return;
     }
 
     setError("");
+    setSelectedFiles(files);
+    setMediaCaptions(files.map((_, index) => mediaCaptions[index] || ""));
     const imageCount = files.filter((file) => file.type.startsWith("image/")).length;
     const videoCount = files.filter((file) => file.type.startsWith("video/")).length;
     const parts = [];
@@ -53,6 +61,7 @@ export function SubmissionForm() {
     setIsSubmitting(true);
     setError("");
     setResultMessage("");
+    formData.set("mediaCaptions", JSON.stringify(mediaCaptions));
 
     try {
       const response = await fetch("/api/submissions", {
@@ -73,6 +82,8 @@ export function SubmissionForm() {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      setSelectedFiles([]);
+      setMediaCaptions([]);
       setSelectionMessage("");
       router.refresh();
     } catch {
@@ -80,6 +91,10 @@ export function SubmissionForm() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  function handleCaptionChange(index: number, value: string) {
+    setMediaCaptions((current) => current.map((caption, currentIndex) => (currentIndex === index ? value : caption)));
   }
 
   if (submitted) {
@@ -113,14 +128,12 @@ export function SubmissionForm() {
       </label>
 
       <label className="field">
-        <span>Memory</span>
+        <span>Story or memory</span>
         <textarea
           name="message"
-          required
-          minLength={5}
           maxLength={3000}
           rows={6}
-          placeholder="Share your thoughts or a memory..."
+          placeholder="Optional. Add this if you want the submission to appear in Stories."
         />
       </label>
 
@@ -142,6 +155,22 @@ export function SubmissionForm() {
       <p className="microcopy">
         Photos up to 12 MB each. Video up to 35 MB.
       </p>
+      {selectedFiles.length > 0 ? (
+        <div className="media-caption-list">
+          {selectedFiles.map((file, index) => (
+            <label key={`${file.name}-${index}`} className="field media-caption-field">
+              <span>{file.type.startsWith("video/") ? "Video" : "Photo"} caption: {file.name}</span>
+              <input
+                type="text"
+                maxLength={180}
+                placeholder="Optional caption for the gallery"
+                value={mediaCaptions[index] || ""}
+                onChange={(event) => handleCaptionChange(index, event.target.value)}
+              />
+            </label>
+          ))}
+        </div>
+      ) : null}
       {selectionMessage ? <p className="microcopy">{selectionMessage}</p> : null}
 
       <div className="form-footer">

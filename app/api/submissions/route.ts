@@ -17,6 +17,13 @@ export async function POST(request: Request) {
   const formData = await request.formData();
   const name = String(formData.get("name") || "").trim() || null;
   const message = String(formData.get("message") || "").trim();
+  const mediaCaptions = (() => {
+    try {
+      return JSON.parse(String(formData.get("mediaCaptions") || "[]")) as string[];
+    } catch {
+      return [];
+    }
+  })();
   const files = formData
     .getAll("media")
     .filter((value): value is File => value instanceof File && value.size > 0);
@@ -30,7 +37,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: mediaValidationError }, { status: 400 });
   }
 
-  const media = await saveMediaFiles(files);
+  const media = await saveMediaFiles(files, mediaCaptions);
   const moderation = await moderateMemorialPost(name, message, media);
   const settings = await getSiteSettings();
   const status =

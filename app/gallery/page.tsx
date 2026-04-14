@@ -10,7 +10,8 @@ export default async function GalleryPage() {
       kind: file.kind,
       url: file.url,
       thumbnailUrl: file.thumbnailUrl,
-      caption: submission.message || null,
+      caption: file.caption || null,
+      storyText: submission.message || null,
       name: submission.name
     }))
   );
@@ -29,6 +30,9 @@ export default async function GalleryPage() {
           <div className="masonry-grid">
             {mediaItems.map((item) => (
               <div key={item.id} className="masonry-item">
+                <div className="gallery-item-kind">
+                  {item.storyText ? "Story with media" : item.kind === "video" ? "Video memory" : "Photo memory"}
+                </div>
                 {item.kind === "video" ? (
                   <video
                     className="gallery-video"
@@ -40,9 +44,10 @@ export default async function GalleryPage() {
                 ) : (
                   <img src={item.url} alt={item.caption || "Memorial Photo"} />
                 )}
-                {(item.caption || item.name) && (
+                {(item.caption || item.name || item.storyText) && (
                   <div className="photo-meta">
                     {item.caption && <p>{item.caption}</p>}
+                    {!item.caption && item.storyText ? <p>{item.storyText}</p> : null}
                     {item.name && <span>Shared by {item.name}</span>}
                   </div>
                 )}

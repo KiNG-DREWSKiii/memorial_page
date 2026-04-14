@@ -8,7 +8,7 @@ export async function publishSubmissionArtifacts(submission: Submission) {
         memorialKey: submission.memorialKey,
         sourceSubmissionId: submission.id,
         imageUrl: file.url,
-        caption: submission.message.length < 50 ? submission.message : null,
+        caption: file.caption || null,
         name: submission.name,
         approved: true,
         featured: false

@@ -9,6 +9,7 @@ export type MediaAsset = {
   kind: MediaKind;
   mimeType: string;
   fileName: string;
+  caption?: string | null;
 };
 
 export type Submission = {
