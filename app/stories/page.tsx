@@ -1,12 +1,20 @@
 import { StoryMediaCarousel } from "@/components/story-media-carousel";
 import { listStories, listSubmissions, syncMissingStoriesFromApprovedSubmissions } from "@/lib/data-store";
+import type { Story, Submission } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function StoriesPage() {
-  await syncMissingStoriesFromApprovedSubmissions();
-  const stories = await listStories(true);
-  const approvedSubmissions = await listSubmissions("approved");
+  let stories: Story[] = [];
+  let approvedSubmissions: Submission[] = [];
+
+  try {
+    await syncMissingStoriesFromApprovedSubmissions();
+    stories = await listStories(true);
+    approvedSubmissions = await listSubmissions("approved");
+  } catch (error) {
+    console.error("Failed to load stories.", error);
+  }
   const submissionsById = new Map(approvedSubmissions.map((submission) => [submission.id, submission]));
 
   return (

@@ -3,14 +3,21 @@ import { SlideshowBackground } from "@/components/slideshow-background";
 import { memorialConfig } from "@/lib/config";
 import { listPhotos, listStories, syncMissingStoriesFromApprovedSubmissions } from "@/lib/data-store";
 import { shuffleArray } from "@/lib/utils";
-import type { SlideshowItem } from "@/lib/types";
+import type { Photo, SlideshowItem, Story } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  await syncMissingStoriesFromApprovedSubmissions();
-  const approvedPhotos = await listPhotos(true);
-  const approvedStories = await listStories(true);
+  let approvedPhotos: Photo[] = [];
+  let approvedStories: Story[] = [];
+
+  try {
+    await syncMissingStoriesFromApprovedSubmissions();
+    approvedPhotos = await listPhotos(true);
+    approvedStories = await listStories(true);
+  } catch (error) {
+    console.error("Failed to load homepage memorial content.", error);
+  }
 
   const featuredPhotos = approvedPhotos.filter((p) => p.featured).slice(0, 4);
   const featuredSlides: SlideshowItem[] = featuredPhotos.map((photo) => ({

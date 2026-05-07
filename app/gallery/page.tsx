@@ -1,9 +1,16 @@
 import { listSubmissions } from "@/lib/data-store";
+import type { Submission } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function GalleryPage() {
-  const submissions = await listSubmissions("approved");
+  let submissions: Submission[] = [];
+
+  try {
+    submissions = await listSubmissions("approved");
+  } catch (error) {
+    console.error("Failed to load gallery submissions.", error);
+  }
   const mediaItems = submissions.flatMap((submission) =>
     submission.files.map((file, index) => ({
       id: `${submission.id}-${index}`,
