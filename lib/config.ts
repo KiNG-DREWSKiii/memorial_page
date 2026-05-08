@@ -57,7 +57,7 @@ const themePresets: Record<
     primary: "#6a9fe8",
     tintStrong: "106, 159, 232",
     tintSoft: "221, 239, 255",
-    backgroundImage: "/background-sky.png"
+    backgroundImage: "/background-heaven.png"
   },
   lilac: {
     bg: "#fcfaff",
