@@ -1,4 +1,5 @@
 type MemorialThemePreset = "rose" | "sky" | "lilac" | "sage";
+type MemorialEmblemPreset = "none" | "cross" | "dove" | "lily" | "rose";
 
 function readColor(name: string, fallback: string) {
   return process.env[name]?.trim() || fallback;
@@ -12,7 +13,16 @@ function resolveThemePreset(preset: string | undefined): MemorialThemePreset {
   return "rose";
 }
 
+function resolveEmblemPreset(preset: string | undefined): MemorialEmblemPreset {
+  if (preset === "cross" || preset === "dove" || preset === "lily" || preset === "rose") {
+    return preset;
+  }
+
+  return "none";
+}
+
 const themePreset = resolveThemePreset(process.env.MEMORIAL_THEME);
+const emblemPreset = resolveEmblemPreset(process.env.MEMORIAL_EMBLEM);
 
 const themePresets: Record<
   MemorialThemePreset,
@@ -114,6 +124,7 @@ const selectedTheme = themePresets[themePreset];
 export const memorialConfig = {
   key: process.env.MEMORIAL_KEY ?? "jaylyn-reese-fehr",
   name: process.env.MEMORIAL_NAME ?? "Jaylyn Reese Fehr",
+  emblem: emblemPreset,
   portraitUrl: process.env.MEMORIAL_PORTRAIT_URL ?? "/jaylyn-portrait-edited.png",
   dates: process.env.MEMORIAL_DATES ?? "2008 – April 6, 2026",
   message:
