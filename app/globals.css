@@ -255,12 +255,13 @@ h2 {
 
 h1 {
   font-size: clamp(3.2rem, 9vw, 6.8rem);
-  max-width: 12ch;
-  text-wrap: balance;
+  max-width: none;
+  text-wrap: initial;
 }
 
 .hero-name-line {
   display: block;
+  white-space: nowrap;
 }
 
 h2 {
