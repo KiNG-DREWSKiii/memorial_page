@@ -23,6 +23,8 @@ const themeStyle = {
   "--primary": memorialTheme.primary,
   "--tint-strong": memorialTheme.tintStrong,
   "--tint-soft": memorialTheme.tintSoft,
+  "--wash-strong": memorialTheme.washStrong,
+  "--wash-soft": memorialTheme.washSoft,
   "--theme-background-image": `url("${memorialTheme.backgroundImage}")`
 } as CSSProperties;
 

@@ -28,6 +28,8 @@ const themePresets: Record<
     primary: string;
     tintStrong: string;
     tintSoft: string;
+    washStrong: string;
+    washSoft: string;
     backgroundImage: string;
   }
 > = {
@@ -43,6 +45,8 @@ const themePresets: Record<
     primary: "#d58ea1",
     tintStrong: "244, 143, 177",
     tintSoft: "255, 248, 221",
+    washStrong: "255, 250, 251",
+    washSoft: "255, 250, 251",
     backgroundImage: "/background-heaven.png"
   },
   sky: {
@@ -57,6 +61,8 @@ const themePresets: Record<
     primary: "#6a9fe8",
     tintStrong: "106, 159, 232",
     tintSoft: "221, 239, 255",
+    washStrong: "247, 251, 255",
+    washSoft: "237, 246, 255",
     backgroundImage: "/background-heaven.png"
   },
   lilac: {
@@ -71,6 +77,8 @@ const themePresets: Record<
     primary: "#b89adf",
     tintStrong: "184, 154, 223",
     tintSoft: "242, 232, 255",
+    washStrong: "252, 250, 255",
+    washSoft: "244, 239, 255",
     backgroundImage: "/background-heaven.png"
   },
   sage: {
@@ -85,6 +93,8 @@ const themePresets: Record<
     primary: "#7fa78d",
     tintStrong: "127, 167, 141",
     tintSoft: "233, 242, 228",
+    washStrong: "251, 253, 249",
+    washSoft: "240, 246, 239",
     backgroundImage: "/background-heaven.png"
   }
 };
@@ -94,7 +104,7 @@ const selectedTheme = themePresets[themePreset];
 export const memorialConfig = {
   key: process.env.MEMORIAL_KEY ?? "jaylyn-reese-fehr",
   name: process.env.MEMORIAL_NAME ?? "Jaylyn Reese Fehr",
-  portraitUrl: process.env.MEMORIAL_PORTRAIT_URL ?? "",
+  portraitUrl: process.env.MEMORIAL_PORTRAIT_URL ?? "/jaylyn-portrait-edited.png",
   dates: process.env.MEMORIAL_DATES ?? "2008 – April 6, 2026",
   message:
     process.env.MEMORIAL_MESSAGE ??
@@ -114,6 +124,8 @@ export const memorialTheme = {
   primary: readColor("THEME_PRIMARY", selectedTheme.primary),
   tintStrong: readColor("THEME_TINT_STRONG", selectedTheme.tintStrong),
   tintSoft: readColor("THEME_TINT_SOFT", selectedTheme.tintSoft),
+  washStrong: readColor("THEME_WASH_STRONG", selectedTheme.washStrong),
+  washSoft: readColor("THEME_WASH_SOFT", selectedTheme.washSoft),
   backgroundImage: process.env.THEME_BACKGROUND_IMAGE?.trim() || selectedTheme.backgroundImage
 };
 
