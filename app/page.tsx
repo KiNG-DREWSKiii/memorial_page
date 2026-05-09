@@ -16,9 +16,7 @@ function splitHeroName(name: string) {
 
   const lastName = parts.at(-1) as string;
   const prefix = parts.slice(0, -1).join(" ");
-  const normalizedPrefixLength = prefix.replace(/\s+/g, "").length;
-
-  if (normalizedPrefixLength <= 15) {
+  if (prefix.length <= 16) {
     return { firstLine: prefix, secondLine: lastName };
   }
 
