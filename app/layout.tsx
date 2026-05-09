@@ -25,6 +25,8 @@ const themeStyle = {
   "--tint-soft": memorialTheme.tintSoft,
   "--wash-strong": memorialTheme.washStrong,
   "--wash-soft": memorialTheme.washSoft,
+  "--wash-top-opacity": memorialTheme.washTopOpacity,
+  "--wash-bottom-opacity": memorialTheme.washBottomOpacity,
   "--theme-background-image": `url("${memorialTheme.backgroundImage}")`
 } as CSSProperties;
 

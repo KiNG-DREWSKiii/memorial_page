@@ -7,6 +7,23 @@ import type { Photo, SlideshowItem, Story } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+function splitHeroName(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+
+  if (parts.length <= 1) {
+    return { firstLine: name, secondLine: null as string | null };
+  }
+
+  const lastName = parts.at(-1) as string;
+  const prefix = parts.slice(0, -1).join(" ");
+
+  if (prefix.length <= 15) {
+    return { firstLine: prefix, secondLine: lastName };
+  }
+
+  return { firstLine: name, secondLine: null as string | null };
+}
+
 export default async function HomePage() {
   let approvedPhotos: Photo[] = [];
   let approvedStories: Story[] = [];
@@ -75,13 +92,17 @@ export default async function HomePage() {
   }
 
   const slideshowItems = [...featuredSlides, ...alternatingPool];
+  const heroName = splitHeroName(memorialConfig.name);
 
   return (
     <main className="page-shell public-layout">
       <section className="hero-section center-hero">
         <div className="hero-copy text-center">
           <p className="eyebrow">In Loving Memory</p>
-          <h1>{memorialConfig.name}</h1>
+          <h1>
+            <span className="hero-name-line">{heroName.firstLine}</span>
+            {heroName.secondLine ? <span className="hero-name-line">{heroName.secondLine}</span> : null}
+          </h1>
           <div className="hero-portrait-frame" aria-hidden="true">
             {memorialConfig.portraitUrl ? (
               <img className="hero-portrait-image" src={memorialConfig.portraitUrl} alt={`${memorialConfig.name} portrait`} />

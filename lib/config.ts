@@ -30,6 +30,8 @@ const themePresets: Record<
     tintSoft: string;
     washStrong: string;
     washSoft: string;
+    washTopOpacity: string;
+    washBottomOpacity: string;
     backgroundImage: string;
   }
 > = {
@@ -47,6 +49,8 @@ const themePresets: Record<
     tintSoft: "255, 248, 221",
     washStrong: "255, 250, 251",
     washSoft: "255, 250, 251",
+    washTopOpacity: "0.34",
+    washBottomOpacity: "0.70",
     backgroundImage: "/background-heaven.png"
   },
   sky: {
@@ -63,6 +67,8 @@ const themePresets: Record<
     tintSoft: "221, 239, 255",
     washStrong: "247, 251, 255",
     washSoft: "237, 246, 255",
+    washTopOpacity: "0.12",
+    washBottomOpacity: "0.32",
     backgroundImage: "/background-heaven.png"
   },
   lilac: {
@@ -79,6 +85,8 @@ const themePresets: Record<
     tintSoft: "242, 232, 255",
     washStrong: "252, 250, 255",
     washSoft: "244, 239, 255",
+    washTopOpacity: "0.30",
+    washBottomOpacity: "0.64",
     backgroundImage: "/background-heaven.png"
   },
   sage: {
@@ -95,6 +103,8 @@ const themePresets: Record<
     tintSoft: "233, 242, 228",
     washStrong: "251, 253, 249",
     washSoft: "240, 246, 239",
+    washTopOpacity: "0.30",
+    washBottomOpacity: "0.62",
     backgroundImage: "/background-heaven.png"
   }
 };
@@ -126,6 +136,8 @@ export const memorialTheme = {
   tintSoft: readColor("THEME_TINT_SOFT", selectedTheme.tintSoft),
   washStrong: readColor("THEME_WASH_STRONG", selectedTheme.washStrong),
   washSoft: readColor("THEME_WASH_SOFT", selectedTheme.washSoft),
+  washTopOpacity: process.env.THEME_WASH_TOP_OPACITY?.trim() || selectedTheme.washTopOpacity,
+  washBottomOpacity: process.env.THEME_WASH_BOTTOM_OPACITY?.trim() || selectedTheme.washBottomOpacity,
   backgroundImage: process.env.THEME_BACKGROUND_IMAGE?.trim() || selectedTheme.backgroundImage
 };
 
