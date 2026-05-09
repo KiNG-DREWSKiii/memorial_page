@@ -1,5 +1,15 @@
 import { uploadLimits } from "@/lib/config";
 
+const supportedImageTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/avif"
+]);
+
+const heicImageTypes = new Set(["image/heic", "image/heif"]);
+
 type UploadCandidate = {
   type: string;
   size: number;
@@ -13,6 +23,16 @@ export function validateMediaSelection(files: UploadCandidate[]) {
 
   if (unsupportedFiles.length > 0) {
     return "Only images and videos are allowed.";
+  }
+
+  const heicImage = imageFiles.find((file) => heicImageTypes.has(file.type.toLowerCase()));
+  if (heicImage) {
+    return `${heicImage.name} uses HEIC/HEIF, which is not supported yet. Please convert it to JPG or PNG first.`;
+  }
+
+  const unsupportedImage = imageFiles.find((file) => file.type && !supportedImageTypes.has(file.type.toLowerCase()));
+  if (unsupportedImage) {
+    return `${unsupportedImage.name} is not a supported image format. Please upload JPG, PNG, WebP, GIF, or AVIF.`;
   }
 
   if (files.length > uploadLimits.maxMediaFiles) {

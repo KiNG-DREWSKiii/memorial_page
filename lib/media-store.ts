@@ -19,19 +19,23 @@ function getPublicUploadPath(fileName: string) {
 }
 
 async function optimizeImage(bytes: Buffer) {
-  const full = await sharp(bytes)
-    .rotate()
-    .resize({ width: 2000, withoutEnlargement: true })
-    .webp({ quality: 82 })
-    .toBuffer();
+  try {
+    const full = await sharp(bytes)
+      .rotate()
+      .resize({ width: 2000, withoutEnlargement: true })
+      .webp({ quality: 82 })
+      .toBuffer();
 
-  const thumb = await sharp(bytes)
-    .rotate()
-    .resize({ width: 700, withoutEnlargement: true })
-    .webp({ quality: 72 })
-    .toBuffer();
+    const thumb = await sharp(bytes)
+      .rotate()
+      .resize({ width: 700, withoutEnlargement: true })
+      .webp({ quality: 72 })
+      .toBuffer();
 
-  return { full, thumb };
+    return { full, thumb };
+  } catch {
+    throw new Error("One of the selected photos could not be processed. Please upload JPG, PNG, WebP, GIF, or AVIF.");
+  }
 }
 
 async function uploadToSupabase(pathName: string, body: Buffer, contentType: string) {
