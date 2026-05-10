@@ -1,4 +1,4 @@
-import { memorialConfig } from "@/lib/config";
+import { memorialConfig, serviceConfig } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -11,26 +11,41 @@ export default function ServiceInfoPage() {
             <h1>Service Details</h1>
             <p className="eyebrow">{memorialConfig.name}</p>
           </div>
-          
+
           <div style={{ marginTop: 32, marginBottom: 32, lineHeight: 1.8 }}>
             <p className="hero-message" style={{ margin: "0 auto", fontSize: "1.1rem" }}>
-              Our hearts are broken by the sudden and tragic loss of our sweet Jaylyn. She brought unending joy, laughter, and light into our family and the lives of everyone who knew her. While we struggle to understand this unimaginable loss, we find comfort in the outpouring of love and support from our community.
+              {serviceConfig.summary}
             </p>
             <p className="hero-message" style={{ margin: "16px auto 0", fontSize: "1.1rem" }}>
-              We know Jaylyn loved fiercely and was loved by many. Thank you for your continued prayers during this incredibly difficult time.
+              {serviceConfig.note}
             </p>
           </div>
 
-          <div style={{ padding: 32, background: "rgba(255, 255, 255, 0.4)", borderRadius: 16 }}>
-            <h3>Memorial Service</h3>
-            <p style={{ marginTop: 16, color: "var(--muted)", fontStyle: "italic" }}>
-              Service arrangements are currently To Be Announced. <br/>
-              Please check back here, as we will update this page with details once they are finalized.
-            </p>
+          <div style={{ padding: 32, background: "rgba(255, 255, 255, 0.4)", borderRadius: 16, textAlign: "left" }}>
+            <h3 style={{ marginTop: 0 }}>{serviceConfig.title}</h3>
+            <div style={{ display: "grid", gap: 14, marginTop: 18 }}>
+              <p style={{ margin: 0 }}>
+                <strong>Date:</strong> {serviceConfig.dateLabel}
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Time:</strong> {serviceConfig.timeLabel}
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Location:</strong> {serviceConfig.venue}
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Address:</strong> {serviceConfig.address}
+              </p>
+              <p style={{ margin: "8px 0 0", color: "var(--muted)" }}>
+                {serviceConfig.arrangements}
+              </p>
+            </div>
           </div>
-          
+
           <div style={{ marginTop: 32 }}>
-            <p className="microcopy">In the meantime, we invite you to share your photos and stories of Jaylyn below so we can keep her memory alive together.</p>
+            <p className="microcopy">
+              If you are unable to attend in person, we invite you to share photos and memories here so their tribute can continue to grow.
+            </p>
           </div>
         </div>
       </div>

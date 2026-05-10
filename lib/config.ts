@@ -132,6 +132,23 @@ export const memorialConfig = {
     "A bright light that touched so many lives. We invite friends and loved ones to share their favorite memories, photos, and stories as we honor Jaylyn's beautiful spirit."
 };
 
+export const serviceConfig = {
+  title: process.env.SERVICE_TITLE?.trim() || "Shared Memorial Service",
+  dateLabel: process.env.SERVICE_DATE?.trim() || "Monday, May 11, 2026",
+  timeLabel: process.env.SERVICE_TIME?.trim() || "6:30 PM",
+  venue: process.env.SERVICE_VENUE?.trim() || "Browns Bridge Church",
+  address: process.env.SERVICE_ADDRESS?.trim() || "3860 Browns Bridge Road, Cumming, GA 30041",
+  summary:
+    process.env.SERVICE_SUMMARY?.trim() ||
+    "The community is invited to come together in support and remembrance as we celebrate the lives of Jaylyn Fehr, Jackson Mobley, and Charlotte Martin.",
+  note:
+    process.env.SERVICE_NOTE?.trim() ||
+    "All who knew and loved them are welcome to attend as we honor their lives and share in this time of reflection and unity.",
+  arrangements:
+    process.env.SERVICE_ARRANGEMENTS?.trim() ||
+    "Ingram Funeral Home is handling arrangements."
+};
+
 export const memorialTheme = {
   preset: themePreset,
   bg: readColor("THEME_BG", selectedTheme.bg),
