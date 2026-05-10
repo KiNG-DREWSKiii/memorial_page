@@ -54,7 +54,11 @@ async function uploadToSupabase(pathName: string, body: Buffer, contentType: str
 }
 
 export async function saveMediaFiles(files: File[], captions: string[] = []) {
-  await mkdir(uploadDir, { recursive: true });
+  const useLocalFallback = !isSupabaseConfigured();
+
+  if (useLocalFallback) {
+    await mkdir(uploadDir, { recursive: true });
+  }
 
   const assets = await Promise.all(
     files.map(async (file, index) => {
@@ -71,7 +75,7 @@ export async function saveMediaFiles(files: File[], captions: string[] = []) {
         let url: string;
         let thumbnailUrl: string;
 
-        if (isSupabaseConfigured()) {
+        if (!useLocalFallback) {
           url = await uploadToSupabase(imagePath, full, "image/webp");
           thumbnailUrl = await uploadToSupabase(thumbPath, thumb, "image/webp");
         } else {
@@ -99,7 +103,7 @@ export async function saveMediaFiles(files: File[], captions: string[] = []) {
       const fileName = `${createId()}.${extension}`;
       let url: string;
 
-      if (isSupabaseConfigured()) {
+      if (!useLocalFallback) {
         const videoPath = `${memorialConfig.key}/videos/${fileName}`;
         url = await uploadToSupabase(videoPath, bytes, file.type || "application/octet-stream");
       } else {
